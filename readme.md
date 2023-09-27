@@ -1,11 +1,11 @@
-# Rolster Reactive Store
+# Rolster Messenger Service
 
-Library that allows you to manage the status of applications.
+Library that allows you to manage messaging services.
 
 ## Installation
 
 ```
-npm i @rolster/reactive-store
+npm i @rolster/messenger-service
 ```
 
 ## Configuration
