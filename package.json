@@ -47,5 +47,10 @@
     "type": "git",
     "url": "https://github.com/rolster-developments/typescript-messenger-service.git"
   },
-  "keywords": ["rolster", "typescript", "messenger", "pubsub"]
+  "keywords": [
+    "rolster",
+    "typescript",
+    "messenger",
+    "pubsub"
+  ]
 }
