@@ -1,4 +1,4 @@
-import { fromPromise } from '@rolster/helpers-advanced';
+import { fromPromise } from '@rolster/commons';
 import createFromInvertly, {
   Constructable,
   Context,
