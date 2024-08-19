@@ -5,18 +5,18 @@ import createFromInvertly, {
   Injectable
 } from '@rolster/invertly';
 
-export abstract class Subscriber<T = unknown> {
-  abstract execute(value: T): any | Promise<any>;
+export abstract class Subscriber<T = any, V = any> {
+  abstract execute(value: T): V | Promise<V>;
 }
 
 type Subscription = Constructable<Subscriber>;
 
-interface RegisterProps {
+interface RegisterOptions {
   event: string;
   subscription: Subscription;
 }
 
-interface Emitter<T = unknown> {
+interface EmitterOptions<T = unknown> {
   event: string;
   value: T;
   context?: Context;
@@ -24,22 +24,22 @@ interface Emitter<T = unknown> {
 
 const events = new Map<string, Set<Subscription>>();
 
-export function registerPubSub(props: RegisterProps): void {
-  const { event, subscription } = props;
+export function registerEventBus(options: RegisterOptions): void {
+  const { event, subscription } = options;
 
-  let eventSet = events.get(event);
+  let subscriptions = events.get(event);
 
-  if (!eventSet) {
-    eventSet = new Set();
+  if (!subscriptions) {
+    subscriptions = new Set(); // New collection
 
-    events.set(event, eventSet);
+    events.set(event, subscriptions);
   }
 
-  eventSet.add(subscription);
+  subscriptions.add(subscription);
 }
 
-export function emitPubSub<T>(config: Emitter<T>): Promise<any[]> {
-  const { event, value, context } = config;
+export function emitEventBus<T>(options: EmitterOptions<T>): Promise<any[]> {
+  const { event, value, context } = options;
 
   const subscriptions = events.get(event);
 
@@ -49,7 +49,7 @@ export function emitPubSub<T>(config: Emitter<T>): Promise<any[]> {
 
   const promises = Array.from(subscriptions).map((token) => {
     const subscription = createFromInvertly({
-      config: { token, context }
+      config: { context, token }
     });
 
     return fromPromise(subscription.execute(value));
@@ -58,15 +58,19 @@ export function emitPubSub<T>(config: Emitter<T>): Promise<any[]> {
   return Promise.all(promises);
 }
 
-export abstract class PubSub {
-  abstract emit<T = unknown>(event: string, value: T): Promise<any[]>;
+export abstract class EventBus {
+  abstract emit<T = any>(event: string, value: T): Promise<any[]>;
 }
 
 @Injectable({ singleton: false })
-export class RolsterPubSub implements PubSub {
+export class RolsterEventBus implements EventBus {
   constructor(private context?: Context) {}
 
-  public emit<T = unknown>(event: string, value: T): Promise<any[]> {
-    return emitPubSub({ event, value, context: this.context });
+  public emit<T = any>(event: string, value: T): Promise<any[]> {
+    return emitEventBus({
+      event,
+      value,
+      context: this.context
+    });
   }
 }
