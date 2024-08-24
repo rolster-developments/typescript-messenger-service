@@ -48,9 +48,7 @@ export function emitEventBus<T>(options: EmitterOptions<T>): Promise<any[]> {
   }
 
   const promises = Array.from(subscriptions).map((token) => {
-    const subscription = createFromInvertly({
-      config: { context, token }
-    });
+    const subscription = createFromInvertly({ context, token });
 
     return fromPromise(subscription.execute(value));
   });
