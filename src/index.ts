@@ -1,19 +1,19 @@
-import { fromPromise } from '@rolster/commons';
+import { SecureMap, fromPromise } from '@rolster/commons';
 import createFromInvertly, {
   Constructable,
   Context,
   Injectable
 } from '@rolster/invertly';
 
-export abstract class Subscriber<T = any, V = any> {
+export abstract class EventBusSubscriber<T = any, V = any> {
   abstract execute(value: T): V | Promise<V>;
 }
 
-type Subscription = Constructable<Subscriber>;
+type EventBusSubscription = Constructable<EventBusSubscriber>;
 
 interface RegisterOptions {
   event: string;
-  subscription: Subscription;
+  subscription: EventBusSubscription;
 }
 
 interface EmitterOptions<T = unknown> {
@@ -22,18 +22,12 @@ interface EmitterOptions<T = unknown> {
   context?: Context;
 }
 
-const events = new Map<string, Set<Subscription>>();
+const events = new SecureMap<Set<EventBusSubscription>>();
 
 export function registerEventBus(options: RegisterOptions): void {
   const { event, subscription } = options;
 
-  let subscriptions = events.get(event);
-
-  if (!subscriptions) {
-    subscriptions = new Set(); // New collection
-
-    events.set(event, subscriptions);
-  }
+  const subscriptions = events.request(event, () => new Set());
 
   subscriptions.add(subscription);
 }
@@ -47,21 +41,21 @@ export function emitEventBus<T>(options: EmitterOptions<T>): Promise<any[]> {
     return Promise.resolve([]);
   }
 
-  const promises = Array.from(subscriptions).map((token) => {
-    const subscription = createFromInvertly({ context, token });
+  return Promise.all(
+    Array.from(subscriptions).map((token) => {
+      const subscription = createFromInvertly({ context, token });
 
-    return fromPromise(subscription.execute(value));
-  });
-
-  return Promise.all(promises);
+      return fromPromise(subscription.execute(value));
+    })
+  );
 }
 
-export abstract class EventBus {
+export abstract class AbstractEventBus {
   abstract emit<T = any>(event: string, value: T): Promise<any[]>;
 }
 
 @Injectable({ singleton: false })
-export class RolsterEventBus implements EventBus {
+export class EventBus implements AbstractEventBus {
   constructor(private context?: Context) {}
 
   public emit<T = any>(event: string, value: T): Promise<any[]> {
