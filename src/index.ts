@@ -22,12 +22,12 @@ interface EmitterOptions<T = unknown> {
   context?: Context;
 }
 
-const events = new SecureMap<Set<EventBusSubscription>>();
+const events = new SecureMap<Set<EventBusSubscription>>(() => new Set());
 
 export function registerEventBus(options: RegisterOptions): void {
   const { event, subscription } = options;
 
-  const subscriptions = events.request(event, () => new Set());
+  const subscriptions = events.request(event);
 
   subscriptions.add(subscription);
 }
