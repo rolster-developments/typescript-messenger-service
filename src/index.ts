@@ -25,29 +25,24 @@ interface EmitterOptions<T = unknown> {
 const events = new SecureMap<Set<EventBusSubscription>>(() => new Set());
 
 export function registerEventBus(options: RegisterOptions): void {
-  const { event, subscription } = options;
-
-  const subscriptions = events.request(event);
-
-  subscriptions.add(subscription);
+  events.request(options.event).add(options.subscription);
 }
 
 export function emitEventBus<T>(options: EmitterOptions<T>): Promise<any[]> {
-  const { event, value, context } = options;
+  const subscriptions = events.get(options.event);
 
-  const subscriptions = events.get(event);
+  return !subscriptions
+    ? Promise.resolve([])
+    : Promise.all(
+        Array.from(subscriptions).map((token) => {
+          const subscription = createFromInvertly({
+            context: options.context,
+            token
+          });
 
-  if (!subscriptions) {
-    return Promise.resolve([]);
-  }
-
-  return Promise.all(
-    Array.from(subscriptions).map((token) => {
-      const subscription = createFromInvertly({ context, token });
-
-      return fromPromise(subscription.execute(value));
-    })
-  );
+          return fromPromise(subscription.execute(options.value));
+        })
+      );
 }
 
 export abstract class AbstractEventBus {
