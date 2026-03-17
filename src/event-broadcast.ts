@@ -13,25 +13,26 @@ export function registerBroadcastChannel<C = string, V = any>(
   channel: C,
   subscription: Subscription<V>
 ): Unsubscription {
-  const subscriptionUuid = uuid();
+  const _uuid = uuid();
 
   const _subscriptions = subscriptions.request(channel);
 
-  _subscriptions.set(subscriptionUuid, subscription);
+  _subscriptions.set(_uuid, subscription);
 
   return () => {
-    _subscriptions.delete(subscriptionUuid);
+    _subscriptions.delete(_uuid);
   };
 }
 
 export function registerBroadcastAll<C = string>(
   broadcast: Broadcast<C>
 ): Unsubscription {
-  const broadcastUuid = uuid();
-  broadcasts.set(broadcastUuid, broadcast);
+  const _uuid = uuid();
+
+  broadcasts.set(_uuid, broadcast);
 
   return () => {
-    broadcasts.delete(broadcastUuid);
+    broadcasts.delete(_uuid);
   };
 }
 
