@@ -1,6 +1,6 @@
 {
   "name": "@rolster/messenger-service",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "type": "module",
   "description": "Package containing functionality to implement messaging patterns in Typescript projects.",
   "license": "MIT",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@rolster/commons": "^4.1.0",
-    "@rolster/invertly": "^4.2.0",
+    "@rolster/invertly": "^4.2.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

@@ -1,7 +1,8 @@
 import { SecureMap, fromPromise } from '@rolster/commons';
-import createFromInvertly, {
+import {
   Constructable,
   Context,
+  createFromInvertly,
   Injectable
 } from '@rolster/invertly';
 
