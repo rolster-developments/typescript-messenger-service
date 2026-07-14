@@ -1,4 +1,4 @@
-import { SecureMap, fromPromise } from '@rolster/commons';
+import { fromPromise,SecureMap } from '@rolster/commons';
 import {
   Constructable,
   Context,
