@@ -1,6 +1,6 @@
 {
-  "name": "@rolster/messenger-service",
-  "version": "4.1.2",
+  "name": "@rolster/signals",
+  "version": "4.2.0",
   "type": "module",
   "description": "Package containing functionality to implement messaging patterns in Typescript projects.",
   "license": "MIT",
@@ -37,8 +37,8 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@rolster/commons": "^4.1.2",
-    "@rolster/invertly": "^4.2.2",
+    "@rolster/commons": "^4.2.0",
+    "@rolster/invertly": "^4.3.1",
     "uuid": "^14.0.0"
   },
   "devDependencies": {
