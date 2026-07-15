@@ -1,5 +1,4 @@
 import { SecureMap } from '@rolster/commons';
-
 import { v4 as uuid } from 'uuid';
 
 type Broadcast<C = any> = (channel: C, value: any) => void;
